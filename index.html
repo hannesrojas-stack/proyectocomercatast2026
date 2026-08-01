@@ -3,99 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Consulta de Registros</title>
-    <!-- Tailwind CSS para un diseño moderno -->
+    <title>Sistema de Consulta</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
 
     <div class="container mx-auto p-6 max-w-6xl">
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Sistema de Consulta</h1>
+            <h1 class="text-3xl font-bold text-gray-800">Sistema de Consulta de Registros</h1>
             <p class="text-gray-600">Busca por Cédula, NIC o Nombre</p>
         </header>
 
         <!-- Barra de Búsqueda -->
         <div class="bg-white p-4 rounded-lg shadow-md mb-6 flex gap-4">
-            <input type="text" id="searchInput" placeholder="Escribe para buscar..." class="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" id="searchInput" placeholder="Escribe para buscar..." class="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onkeypress="if(event.key === 'Enter') buscarDatos()">
             <button onclick="buscarDatos()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Consultar</button>
         </div>
 
         <!-- Indicador de Carga -->
-        <div id="loading" class="text-center py-4 text-gray-500 hidden">Cargando datos desde Google Sheets...</div>
+        <div id="loading" class="text-center py-4 text-gray-500 hidden">Buscando en Google Sheets...</div>
 
         <!-- Resultados -->
         <div id="resultsContainer" class="grid gap-4">
-            <!-- Los resultados se inyectarán aquí dinámicamente -->
+            <p class="text-center text-gray-500">Introduce un término de búsqueda para comenzar.</p>
         </div>
     </div>
 
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyhoaJy_8lnIGxLUnDurzeg1_kWwFg0w3XUo2JykYpvP1eGS-hMyoQC9geczQL4z-H9/exec';
-        let allData' = [];
 
-        // Cargar los datos automáticamente al abrir la página
-        async function cargarDatos() {
-            document.getElementById('loading').classList.remove('hidden');
-            try {
-                const response = await fetch(WEB_APP_URL);
-                allData = await response.json();
-            } catch (error) {
-                console.error('Error al cargar los datos:', error);
-                alert('No se pudieron cargar los datos.');
-            } finally {
-                document.getElementById('loading').classList.add('hidden');
-            }
-        }
-
-        function buscarDatos() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        async function buscarDatos() {
+            const query = document.getElementById('searchInput').value.trim();
             const container = document.getElementById('resultsContainer');
-            container.innerHTML = '';
-
+            
             if (!query) {
                 container.innerHTML = '<p class="text-center text-gray-500">Por favor, introduce un término de búsqueda.</p>';
                 return;
             }
 
-            // Filtrar los datos basándose en coincidencias parciales en cualquier campo clave (NIC, CEDULA, NOMBRE)
-            const resultados = allData.filter(row => {
-                const nic = String(row['NIC'] || '').toLowerCase();
-                const cedula = String(row['CEDULA'] || '').toLowerCase();
-                const nombre = String(row['NOMBRE'] || '').toLowerCase();
-                const primerApellido = String(row['PRIMER A'] || '').toLowerCase();
+            document.getElementById('loading').classList.remove('hidden');
+            container.innerHTML = '';
 
-                return nic.includes(query) || cedula.includes(query) || nombre.includes(query) || primerApellido.includes(query);
-            });
+            try {
+                const response = await fetch(`${WEB_APP_URL}?q=${encodeURIComponent(query)}`);
+                const resultados = await response.json();
 
-            if (resultados.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500">No se encontraron registros coincidentes.</p>';
-                return;
+                document.getElementById('loading').classList.add('hidden');
+
+                if (resultados.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-500">No se encontraron registros coincidentes.</p>';
+                    return;
+                }
+
+                resultados.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-600';
+                    
+                    card.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+                            <div><span class="font-semibold text-gray-700">NIC:</span> ${item['NIC'] || 'N/A'}</div>
+                            <div><span class="font-semibold text-gray-700">Cédula:</span> ${item['CEDULA'] || 'N/A'}</div>
+                            <div><span class="font-semibold text-gray-700">Nombre:</span> ${item['NOMBRE'] || ''} ${item['PRIMER A'] || ''} ${item['SEGUNDO'] || ''}</div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 border-t pt-2">
+                            <div><span class="font-semibold">Sector / Vía:</span> ${item['SECTOR'] || ''} - ${item['VIA'] || ''}</div>
+                            <div><span class="font-semibold">Situación:</span> ${item['SITUACION'] || 'N/A'}</div>
+                            <div><span class="font-semibold">Teléfono:</span> ${item['TELEFONO'] || 'N/A'}</div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Error al realizar la consulta:', error);
+                document.getElementById('loading').classList.add('hidden');
+                container.innerHTML = '<p class="text-center text-red-500">Ocurrió un error al consultar los datos.</p>';
             }
-
-            // Mostrar resultados en tarjetas limpias
-            resultados.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-600';
-                
-                card.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
-                        <div><span class="font-semibold text-gray-700">NIC:</span> ${item['NIC'] || 'N/A'}</div>
-                        <div><span class="font-semibold text-gray-700">Cédula:</span> ${item['CEDULA'] || 'N/A'}</div>
-                        <div><span class="font-semibold text-gray-700">Nombre:</span> ${item['NOMBRE'] || ''} ${item['PRIMER A'] || ''} ${item['SEGUNDO'] || ''}</div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 border-t pt-2">
-                        <div><span class="font-semibold">Sector / Vía:</span> ${item['SECTOR'] || ''} - ${item['VIA'] || ''}</div>
-                        <div><span class="font-semibold">Situación:</span> ${item['SITUACION'] || 'N/A'}</div>
-                        <div><span class="font-semibold">Teléfono:</span> ${item['TELEFONO'] || 'N/A'}</div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
         }
-
-        // Ejecutar la carga inicial
-        cargarDatos();
     </script>
 </body>
 </html>
