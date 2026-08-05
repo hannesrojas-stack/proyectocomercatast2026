@@ -3,35 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Consulta</title>
+    <title>Sistema de Consulta - Acueducto Valles del Tuy</title>
+    <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Fondo con tu mapa de sectores y capa semioscura para legibilidad */
+        body {
+            background: linear-gradient(rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.90)), 
+                        url('1785277590166.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="font-sans text-gray-100">
 
     <div class="container mx-auto p-6 max-w-6xl">
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Sistema de Consulta de Registros</h1>
-            <p class="text-gray-600">Busca por Cédula, NIC o Nombre</p>
+            <h1 class="text-3xl font-bold text-white tracking-wide uppercase">Sistema de Consulta de Registros</h1>
+            <p class="text-gray-300">Busca por Cédula, NIC o Nombre</p>
         </header>
 
-        <!-- Barra de Búsqueda -->
-        <div class="bg-white p-4 rounded-lg shadow-md mb-6 flex gap-4">
-            <input type="text" id="searchInput" placeholder="Escribe para buscar..." class="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onkeypress="if(event.key === 'Enter') buscarDatos()">
-            <input type="text" id="searchInput" placeholder="Escribe para buscar (Cédula, NIC, Nombre)..." class="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onkeypress="if(event.key === 'Enter') buscarDatos()">
-            <button onclick="buscarDatos()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Consultar</button>
+        <!-- Barra de Búsqueda (Con un solo campo limpio y funcional) -->
+        <div class="bg-gray-800 bg-opacity-95 p-4 rounded-lg shadow-xl mb-6 flex gap-4 border border-gray-700">
+            <input type="text" id="searchInput" placeholder="Escribe para buscar (Cédula, NIC, Nombre)..." class="flex-1 bg-gray-900 border border-gray-600 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400" onkeypress="if(event.key === 'Enter') buscarDatos()">
+            <button onclick="buscarDatos()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition font-semibold">Consultar</button>
         </div>
 
         <!-- Indicador de Carga -->
-        <div id="loading" class="text-center py-4 text-gray-500 hidden">Buscando en Google Sheets...</div>
+        <div id="loading" class="text-center py-4 text-gray-300 hidden font-semibold">Buscando en Google Sheets...</div>
 
         <!-- Resultados -->
         <div id="resultsContainer" class="grid gap-4">
-            <p class="text-center text-gray-500">Introduce un término de búsqueda para comenzar.</p>
+            <p class="text-center text-gray-400">Introduce un término de búsqueda para comenzar.</p>
         </div>
     </div>
 
     <script>
-        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT ENTRE LAS COMILLAS
+        // URL de tu Google Apps Script
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyhoaJy_8lnIGxLUnDurzeg1_kWwFg0w3XUo2JykYpvP1eGS-hMyoQC9geczQL4z-H9/exec';
 
         async function buscarDatos() {
@@ -39,7 +48,7 @@
             const container = document.getElementById('resultsContainer');
 
             if (!query) {
-                container.innerHTML = '<p class="text-center text-gray-500">Por favor, introduce un término de búsqueda.</p>';
+                container.innerHTML = '<p class="text-center text-gray-400">Por favor, introduce un término de búsqueda.</p>';
                 return;
             }
 
@@ -52,34 +61,25 @@
 
                 document.getElementById('loading').classList.add('hidden');
 
-                if (resultados.length === 0) {
                 if (!resultados || resultados.length === 0) {
-                    container.innerHTML = '<p class="text-center text-gray-500">No se encontraron registros coincidentes.</p>';
+                    container.innerHTML = '<p class="text-center text-gray-400">No se encontraron registros coincidentes.</p>';
                     return;
                 }
 
                 resultados.forEach(item => {
                     const card = document.createElement('div');
-                    card.className = 'bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-600';
-                    card.className = 'bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-600 mb-4';
+                    card.className = 'bg-gray-800 bg-opacity-95 p-6 rounded-lg shadow-xl border-l-4 border-blue-500 mb-4 border border-gray-700';
 
                     card.innerHTML = `
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                            <div><span class="font-semibold text-gray-700">NIC:</span> ${item['NIC'] || 'N/A'}</div>
-                            <div><span class="font-semibold text-gray-700">Cédula:</span> ${item['CEDULA'] || 'N/A'}</div>
-                            <div><span class="font-semibold text-gray-700">Nombre:</span> ${item['NOMBRE'] || ''} ${item['PRIMER A'] || ''} ${item['SEGUNDO'] || ''}</div>
-                            <div><span class="font-semibold text-gray-700">Cédula/RIF:</span> ${item['CEDULA RIF'] || 'N/A'}</div>
-                            <div><span class="font-semibold text-gray-700">Nombre:</span> ${item['NOMBRE'] || ''} ${item['PRIMER APELLIDO'] || ''} ${item['SEGUNDO APELLIDO'] || ''}</div>
+                            <div><span class="font-semibold text-gray-400">NIC:</span> <span class="text-white">${item['NIC'] || 'N/A'}</span></div>
+                            <div><span class="font-semibold text-gray-400">Cédula/RIF:</span> <span class="text-white">${item['CEDULA RIF'] || 'N/A'}</span></div>
+                            <div><span class="font-semibold text-gray-400">Nombre:</span> <span class="text-white">${item['NOMBRE'] || ''} ${item['PRIMER APELLIDO'] || ''} ${item['SEGUNDO APELLIDO'] || ''}</span></div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 border-t pt-2">
-                            <div><span class="font-semibold">Sector / Vía:</span> ${item['SECTOR'] || ''} - ${item['VIA'] || ''}</div>
-                            <div><span class="font-semibold">Situación:</span> ${item['SITUACION'] || 'N/A'}</div>
-                            <div><span class="font-semibold">Teléfono:</span> ${item['TELEFONO'] || 'N/A'}</div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 border-t pt-3">
-                            <div><span class="font-semibold">Sector:</span> ${item['SECTOR'] || 'N/A'}</div>
-                            <div><span class="font-semibold">Vía / Finca:</span> ${item['VIA'] || ''} - Nº ${item['NUMERO FINCA'] || ''}</div>
-                            <div><span class="font-semibold">Situación:</span> <span class="text-green-600 font-semibold">${item['SITUACION'] || 'N/A'}</span></div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-300 border-t border-gray-700 pt-3">
+                            <div><span class="font-semibold text-gray-400">Sector:</span> ${item['SECTOR'] || 'N/A'}</div>
+                            <div><span class="font-semibold text-gray-400">Vía / Finca:</span> ${item['VIA'] || ''} - Nº ${item['NUMERO FINCA'] || ''}</div>
+                            <div><span class="font-semibold text-gray-400">Situación:</span> <span class="text-green-400 font-semibold">${item['SITUACION'] || 'N/A'}</span></div>
                         </div>
                     `;
                     container.appendChild(card);
@@ -88,8 +88,7 @@
             } catch (error) {
                 console.error('Error al realizar la consulta:', error);
                 document.getElementById('loading').classList.add('hidden');
-                container.innerHTML = '<p class="text-center text-red-500">Ocurrió un error al consultar los datos.</p>';
-                container.innerHTML = '<p class="text-center text-red-500">Ocurrió un error al conectar con el servidor.</p>';
+                container.innerHTML = '<p class="text-center text-red-400">Ocurrió un error al conectar con el servidor.</p>';
             }
         }
     </script>
