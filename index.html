@@ -3,84 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Consulta</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Plan de Compras 2021 - Acueducto Valles del Tuy | Sistema Estático Heavy Duty</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-red: #D32F2F;
+            --dark-charcoal: rgba(18, 18, 18, 0.92);
+            --panel-gray: rgba(30, 30, 30, 0.95);
+            --border-gray: #333333;
+            --text-light: #F4F4F4;
+            --text-muted: #A0A0A0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Tu mapa de sectores como fondo con una capa oscura semitransparente para legibilidad */
+            background: linear-gradient(rgba(10, 10, 10, 0.88), rgba(20, 20, 20, 0.94)), 
+                        url('1785277590166.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Cabecera Industrial Heavy Duty */
+        .heavy-header {
+            background: rgba(15, 15, 15, 0.95);
+            border-bottom: 4px solid var(--primary-red);
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .heavy-title {
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .heavy-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-system {
+            background-color: var(--primary-red);
+            color: white;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Buscador Industrial */
+        .search-container {
+            background-color: var(--panel-gray);
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .form-control {
+            background-color: #2b2b2b;
+            border: 1px solid #444;
+            color: var(--text-light);
+            border-radius: 2px;
+        }
+
+        .form-control:focus {
+            background-color: #2b2b2b;
+            border-color: var(--primary-red);
+            color: var(--text-light);
+            box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.25);
+        }
+
+        /* Pestañas de Categorías Estilo Panel */
+        .nav-tabs {
+            border-bottom: 2px solid var(--border-gray);
+            gap: 5px;
+        }
+
+        .nav-tabs .nav-link {
+            background-color: rgba(26, 26, 26, 0.9);
+            color: var(--text-muted);
+            border: 1px solid var(--border-gray);
+            border-bottom: none;
+            border-radius: 3px 3px 0 0;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 0.7rem 0.8rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: #555;
+            color: #fff;
+            background-color: rgba(37, 37, 37, 0.95);
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-red);
+            color: #ffffff;
+            border-color: var(--primary-red);
+        }
+
+        /* Contenedor de Tabla Industrial */
+        .table-panel {
+            background-color: var(--panel-gray);
+            border: 1px solid var(--border-gray);
+            border-radius: 0 0 4px 4px;
+            padding: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .table-dark-industrial {
+            color: var(--text-light);
+            background-color: transparent;
+            margin-bottom: 0;
+            font-size: 0.8rem;
+        }
+
+        .table-dark-industrial th {
+            background-color: #111111;
+            color: var(--primary-red);
+            border: 1px solid #333;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table-dark-industrial td {
+            background-color: rgba(30, 30, 30, 0.85);
+            border: 1px solid #2a2a2a;
+            padding: 0.6rem 0.5rem;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table-dark-industrial td:nth-child(3),
+        .table-dark-industrial td:nth-child(4) {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .table-dark-industrial tbody tr:hover td {
+            background-color: rgba(45, 45, 45, 0.95);
+            color: #ffffff;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border-gray);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(5px);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body>
 
-    <div class="container mx-auto p-6 max-w-6xl">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Sistema de Consulta de Registros</h1>
-            <p class="text-gray-600">Busca por Cédula, NIC o Nombre</p>
-        </header>
-
-        <!-- Barra de Búsqueda -->
-        <div class="bg-white p-4 rounded-lg shadow-md mb-6 flex gap-4">
-            <input type="text" id="searchInput" placeholder="Escribe para buscar (Cédula, NIC, Nombre)..." class="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onkeypress="if(event.key === 'Enter') buscarDatos()">
-            <button onclick="buscarDatos()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Consultar</button>
-        </div>
-
-        <!-- Indicador de Carga -->
-        <div id="loading" class="text-center py-4 text-gray-500 hidden">Buscando en Google Sheets...</div>
-
-        <!-- Resultados -->
-        <div id="resultsContainer" class="grid gap-4">
-            <p class="text-center text-gray-500">Introduce un término de búsqueda para comenzar.</p>
+    <!-- Cabecera -->
+    <div class="heavy-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <span class="badge-system mb-2 d-inline-block"><i class="fa-solid fa-box-archive me-1"></i> Archivo Histórico 2021</span>
+                <h1 class="heavy-title fs-3 mb-0">Plan de Compras - Acueducto Valles del Tuy</h1>
+                <p class="heavy-subtitle mb-0">Sistema de Consulta Estático (Alta Velocidad)</p>
+            </div>
+            <div>
+                <span class="text-muted small"><i class="fa-solid fa-shield-halved me-1"></i> Modo Seguro y Protegido</span>
+            </div>
         </div>
     </div>
 
-    <script>
-        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT ENTRE LAS COMILLAS
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyhoaJy_8lnIGxLUnDurzeg1_kWwFg0w3XUo2JykYpvP1eGS-hMyoQC9geczQL4z-H9/exec';
+    <div class="container-fluid px-4">
+        
+        <!-- Buscador Global -->
+        <div class="search-container">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-danger"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" id="globalSearch" class="form-control" placeholder="Buscar por estación, marca, modelo o características en la categoría activa...">
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        async function buscarDatos() {
-            const query = document.getElementById('searchInput').value.trim();
-            const container = document.getElementById('resultsContainer');
+        <!-- Zona de Pestañas (16 Categorías) -->
+        <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat1-tab" data-bs-toggle="tab" data-bs-target="#cat1" type="button" role="tab">AVT Administración</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat2-tab" data-bs-toggle="tab" data-bs-target="#cat2" type="button" role="tab">AVT Operaciones y Mtto Tub AC</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="cat3-tab" data-bs-toggle="tab" data-bs-target="#cat3" type="button" role="tab">AVT Motores y Bomba</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat4-tab" data-bs-toggle="tab" data-bs-target="#cat4" type="button" role="tab">Categoría 4</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat5-tab" data-bs-toggle="tab" data-bs-target="#cat5" type="button" role="tab">Categoría 5</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat6-tab" data-bs-toggle="tab" data-bs-target="#cat6" type="button" role="tab">Categoría 6</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat7-tab" data-bs-toggle="tab" data-bs-target="#cat7" type="button" role="tab">Categoría 7</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat8-tab" data-bs-toggle="tab" data-bs-target="#cat8" type="button" role="tab">Categoría 8</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat9-tab" data-bs-toggle="tab" data-bs-target="#cat9" type="button" role="tab">Categoría 9</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat10-tab" data-bs-toggle="tab" data-bs-target="#cat10" type="button" role="tab">Categoría 10</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat11-tab" data-bs-toggle="tab" data-bs-target="#cat11" type="button" role="tab">Categoría 12</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat12-tab" data-bs-toggle="tab" data-bs-target="#cat12" type="button" role="tab">Categoría 13</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat13-tab" data-bs-toggle="tab" data-bs-target="#cat13" type="button" role="tab">Categoría 14</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat14-tab" data-bs-toggle="tab" data-bs-target="#cat14" type="button" role="tab">Categoría 15</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat15-tab" data-bs-toggle="tab" data-bs-target="#cat15" type="button" role="tab">Categoría 16</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="cat16-tab" data-bs-toggle="tab" data-bs-target="#cat16" type="button" role="tab">Impresoras AVT</button></li>
+        </ul>
+
+        <!-- Contenido de las Tablas (Pestañas) -->
+        <div class="tab-content table-panel" id="categoryTabsContent">
             
-            if (!query) {
-                container.innerHTML = '<p class="text-center text-gray-500">Por favor, introduce un término de búsqueda.</p>';
-                return;
-            }
+            <!-- Categoría 1: AVT Administración -->
+            <div class="tab-pane fade" id="cat1" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-dark-industrial table-striped align-middle searchable-table">
+                        <thead>
+                            <tr>
+                                <th>Detalle de la Demanda (Bien / Servicio)</th>
+                                <th>Unidad de Medida</th>
+                                <th>Cantidad Estimada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>LIBRETAS EN PASTADAS DE UNA LÍNEA</td><td>UND</td><td>30</td></tr>
+                            <tr><td>CARPETAS OSLO LOMO ANCHOS</td><td>UND</td><td>30</td></tr>
+                            <tr><td>LIBRO DE ACTAS 200 FOLIOS</td><td>UND</td><td>30</td></tr>
+                            <tr><td>LIBRO DE ACTAS 300 FOLIOS</td><td>UND</td><td>10</td></tr>
+                            <tr><td>PAPEL BOND BASE 20 TICARTA</td><td>CAJAS</td><td>4</td></tr>
+                            <tr><td>PAPEL BOND BASE 20 T/ OFICIO</td><td>CAJAS</td><td>2</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            document.getElementById('loading').classList.remove('hidden');
-            container.innerHTML = '';
+            <!-- Categoría 2: AVT Operaciones y Mtto Tub AC -->
+            <div class="tab-pane fade" id="cat2" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-dark-industrial table-striped align-middle searchable-table">
+                        <thead>
+                            <tr>
+                                <th>Detalle de la Demanda (Bien / Servicio)</th>
+                                <th>Unidad de Medida</th>
+                                <th>Cantidad Estimada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>PAQUETES DE PILAS DOBLE AA</td><td>UNID</td><td>20</td></tr>
+                            <tr><td>PAQUETES DE PILAS DOBLE AAA</td><td>UNID</td><td>20</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            try {
-                const response = await fetch(`${WEB_APP_URL}?q=${encodeURIComponent(query)}`);
-                const resultados = await response.json();
+            <!-- Categoría 3: AVT OP y MTTO Motores y bomba -->
+            <div class="tab-pane fade show active" id="cat3" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-dark-industrial table-striped align-middle searchable-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Estado</th>
+                                <th rowspan="2">Municipio</th>
+                                <th rowspan="2">Nombre Acueducto</th>
+                                <th rowspan="2">Nombre Estación</th>
+                                <th colspan="5">Bomba Centrífuga</th>
+                                <th colspan="12">Motores Eléctricos</th>
+                                <th rowspan="2">Cantidad</th>
+                                <th rowspan="2">Precio Referencial Unitario (Bs)</th>
+                                <th rowspan="2">Monto Total (Bs)</th>
+                                <th rowspan="2">Observaciones</th>
+                            </tr>
+                            <tr>
+                                <th>Multietapa</th>
+                                <th>Monoblock</th>
+                                <th>Vertical Tipo Turbina</th>
+                                <th>Fabricante o Marca</th>
+                                <th>Modelo</th>
+                                <th>Caudal (L/s)</th>
+                                <th>Presión Descarga (M.C.A.)</th>
+                                <th>Succión mm (pulg)</th>
+                                <th>Descarga mm (pulg)</th>
+                                <th>Fabricante o Marca</th>
+                                <th>Potencia HP (KW)</th>
+                                <th>Voltaje Trifásica (Vol)</th>
+                                <th>Tipo de Conexión (Directa o Estrella-Triángulo)</th>
+                                <th>Velocidad (RPM)</th>
+                                <th>Frame</th>
+                                <th>Clase de Aislamiento</th>
+                                <th>Frecuencia (Hz)</th>
+                                <th>Modo de Ejecución Horizontal o Vertical</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MIRANDA</td><td>CRISTÓBAL ROJAS</td><td>VALLES DEL TUY</td><td>MATALINDA</td>
+                                <td>X</td><td></td><td></td><td>MALMEDI</td><td></td>
+                                <td>43</td><td>74</td><td>100</td><td>50</td>
+                                <td>US ELECTRICAL MOTORS</td><td>100</td><td>230/460</td><td>ESTRELLA - TRIÁNGULO</td>
+                                <td>3560</td><td>CT CLAVE C</td><td>F</td><td>60</td><td>HORIZONTAL</td>
+                                <td>1</td><td></td><td></td><td></td>
+                            </tr>
+                            <tr>
+                                <td>MIRANDA</td><td>CRISTÓBAL ROJAS</td><td>VALLES DEL TUY</td><td>BARRIALITO</td>
+                                <td>X</td><td></td><td></td><td>KSB</td><td>WKL 80/2</td>
+                                <td>36</td><td>108</td><td>160</td><td>80</td>
+                                <td>US ELECTRICAL MOTORS</td><td>75</td><td>230/460</td><td>ESTRELLA - TRIÁNGULO</td>
+                                <td>3565</td><td>365 TS</td><td>F</td><td>60</td><td>HORIZONTAL</td>
+                                <td>1</td><td></td><td></td><td></td>
+                            </tr>
+                            <tr>
+                                <td>MIRANDA</td><td>CRISTÓBAL ROJAS</td><td>VALLES DEL TUY</td><td>CHUPULUN</td>
+                                <td></td><td></td><td>X</td><td>PEERLESS</td><td>CBD 4X410 OLS</td>
+                                <td>22</td><td>60</td><td>200</td><td>100</td>
+                                <td>US ELECTRICAL MOTORS</td><td>15</td><td>230</td><td>ESTRELLA - TRIÁNGULO</td>
+                                <td>1765</td><td>254TP</td><td>F</td><td>60</td><td>VERTICAL</td>
+                                <td>1</td><td></td><td></td><td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                document.getElementById('loading').classList.add('hidden');
+            <!-- Categorías 4 a 16 -->
+            <div class="tab-pane fade" id="cat4" role="tabpanel"><div class="text-muted text-center py-4">Categoría 4 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat5" role="tabpanel"><div class="text-muted text-center py-4">Categoría 5 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat6" role="tabpanel"><div class="text-muted text-center py-4">Categoría 6 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat7" role="tabpanel"><div class="text-muted text-center py-4">Categoría 7 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat8" role="tabpanel"><div class="text-muted text-center py-4">Categoría 8 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat9" role="tabpanel"><div class="text-muted text-center py-4">Categoría 9 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat10" role="tabpanel"><div class="text-muted text-center py-4">Categoría 10 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat11" role="tabpanel"><div class="text-muted text-center py-4">Categoría 11 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat12" role="tabpanel"><div class="text-muted text-center py-4">Categoría 12 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat13" role="tabpanel"><div class="text-muted text-center py-4">Categoría 13 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat14" role="tabpanel"><div class="text-muted text-center py-4">Categoría 14 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat15" role="tabpanel"><div class="text-muted text-center py-4">Categoría 15 pendiente de carga</div></div>
+            <div class="tab-pane fade" id="cat16" role="tabpanel"><div class="text-muted text-center py-4">Categoría 16 pendiente de carga</div></div>
 
-                if (!resultados || resultados.length === 0) {
-                    container.innerHTML = '<p class="text-center text-gray-500">No se encontraron registros coincidentes.</p>';
-                    return;
-                }
+        </div>
 
-                resultados.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-600 mb-4';
-                    
-                    card.innerHTML = `
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                            <div><span class="font-semibold text-gray-700">NIC:</span> ${item['NIC'] || 'N/A'}</div>
-                            <div><span class="font-semibold text-gray-700">Cédula/RIF:</span> ${item['CEDULA RIF'] || 'N/A'}</div>
-                            <div><span class="font-semibold text-gray-700">Nombre:</span> ${item['NOMBRE'] || ''} ${item['PRIMER APELLIDO'] || ''} ${item['SEGUNDO APELLIDO'] || ''}</div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 border-t pt-3">
-                            <div><span class="font-semibold">Sector:</span> ${item['SECTOR'] || 'N/A'}</div>
-                            <div><span class="font-semibold">Vía / Finca:</span> ${item['VIA'] || ''} - Nº ${item['NUMERO FINCA'] || ''}</div>
-                            <div><span class="font-semibold">Situación:</span> <span class="text-green-600 font-semibold">${item['SITUACION'] || 'N/A'}</span></div>
-                        </div>
-                    `;
-                    container.appendChild(card);
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="mb-0">Acueducto Valles del Tuy &bull; Plan de Compras Histórico (2021) &bull; Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Buscador instantáneo en vivo para la tabla activa
+        document.getElementById('globalSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const activePane = document.querySelector('.tab-pane.fade.show.active');
+            if(activePane) {
+                const rows = activePane.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
                 });
-
-            } catch (error) {
-                console.error('Error al realizar la consulta:', error);
-                document.getElementById('loading').classList.add('hidden');
-                container.innerHTML = '<p class="text-center text-red-500">Ocurrió un error al conectar con el servidor.</p>';
             }
-        }
+        });
     </script>
 </body>
 </html>
